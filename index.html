@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本電學互動教學系統 (上冊)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chapter-content {
+            display: none;
+        }
+        .chapter-content.active {
+            display: block;
+        }
+        .math-box {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Times New Roman', serif;
+        }
+        .example-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .solution {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #cbd5e1;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-blue-700 text-white p-6 shadow-lg">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-2xl font-bold italic">基本電學 (Basic Electricity)</h1>
+            <p class="opacity-90">南工電子科核心課程彙整</p>
+        </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 p-6">
+        <!-- Sidebar Navigation -->
+        <aside class="md:w-1/4">
+            <nav class="bg-white rounded-xl shadow-sm overflow-hidden sticky top-6 border border-slate-200">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-blue-800 text-center">
+                    章節選擇 (Ch1 - Ch6)
+                </div>
+                <ul id="nav-list" class="divide-y divide-slate-100">
+                    <li><button onclick="showChapter(1)" class="w-full text-left p-4 hover:bg-blue-50 transition-colors active-nav" id="nav-1">第一章 電學概論</button></li>
+                    <li><button onclick="showChapter(2)" class="w-full text-left p-4 hover:bg-blue-50 transition-colors" id="nav-2">第二章 電阻</button></li>
+                    <li><button onclick="showChapter(3)" class="w-full text-left p-4 hover:bg-blue-50 transition-colors" id="nav-3">第三章 串並聯電路</button></li>
+                    <li><button onclick="showChapter(4)" class="w-full text-left p-4 hover:bg-blue-50 transition-colors" id="nav-4">第四章 直流網路分析</button></li>
+                    <li><button onclick="showChapter(5)" class="w-full text-left p-4 hover:bg-blue-50 transition-colors" id="nav-5">第五章 電容與靜電</button></li>
+                    <li><button onclick="showChapter(6)" class="w-full text-left p-4 hover:bg-blue-50 transition-colors" id="nav-6">第六章 電感與電磁</button></li>
+                </ul>
+            </nav>
+
+            <!-- Mini Calculator Card -->
+            <div class="mt-6 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow-md">
+                <h3 class="font-bold mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    歐姆定律快速工具
+                </h3>
+                <div class="space-y-2 text-sm">
+                    <div>電壓 V: <input type="number" id="calcV" class="w-full mt-1 p-1 rounded text-slate-800" placeholder="Volts"></div>
+                    <div>電阻 R: <input type="number" id="calcR" class="w-full mt-1 p-1 rounded text-slate-800" placeholder="Ohms"></div>
+                    <button onclick="calculateI()" class="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-2 rounded mt-2">計算電流 I</button>
+                    <div id="calcRes" class="text-center font-bold text-lg mt-2"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="md:w-3/4">
+            
+            <!-- Chapter 1 -->
+            <section id="chapter-1" class="chapter-content active">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">第一章：電學概論</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">重點公式彙整</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電流與電荷：</p>
+                            <p class="text-xl">$$I = \frac{Q}{t}$$</p>
+                            <p class="text-xs text-slate-500">I: 電流(A), Q: 電荷(C), t: 時間(s)</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電位與電能：</p>
+                            <p class="text-xl">$$V = \frac{W}{Q}$$</p>
+                            <p class="text-xs text-slate-500">V: 電壓(V), W: 能量(J), Q: 電荷(C)</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電功率：</p>
+                            <p class="text-xl">$$P = \frac{W}{t} = VI$$</p>
+                            <p class="text-xs text-slate-500">P: 功率(W), W: 能量(J)</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">效率：</p>
+                            <p class="text-xl">$$\eta = \frac{P_{out}}{P_{in}} \times 100\%$$</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold mb-4">精選範例</h3>
+                <div class="example-box">
+                    <p class="font-bold">範例 1.1：電荷與電流</p>
+                    <p class="mt-2">若在 5 秒內有 10 庫侖的電荷流過導線截面，試求其電流大小？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        由公式 $I = Q/t$ 得：<br>
+                        $I = 10 / 5 = 2$ 安培 (A)。
+                    </div>
+                </div>
+                <div class="example-box">
+                    <p class="font-bold">範例 1.2：電能計算</p>
+                    <p class="mt-2">一個 100 瓦 (W) 的燈泡持續點亮 10 小時，共消耗多少焦耳的能量？多少度電？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        1. 能量 $W = P \times t = 100 \times (10 \times 3600) = 3,600,000$ 焦耳 (J)。<br>
+                        2. 度電 = $(100/1000) \times 10 = 1$ 度電 (kWh)。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 2 -->
+            <section id="chapter-2" class="chapter-content">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">第二章：電阻</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">重點公式彙整</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">歐姆定律：</p>
+                            <p class="text-xl">$$V = IR \quad R = \frac{V}{I}$$</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電阻定律：</p>
+                            <p class="text-xl">$$R = \rho \frac{L}{A}$$</p>
+                            <p class="text-xs text-slate-500">ρ: 電阻率, L: 長度, A: 截面積</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">溫度與電阻：</p>
+                            <p class="text-xl">$$R_t = R_0(1 + \alpha \Delta t)$$</p>
+                            <p class="text-xs text-slate-500">α: 溫度係數</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電導：</p>
+                            <p class="text-xl">$$G = \frac{1}{R}$$</p>
+                            <p class="text-xs text-slate-500">單位：西門子 (S)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold mb-4">精選範例</h3>
+                <div class="example-box">
+                    <p class="font-bold">範例 2.1：電阻與長度</p>
+                    <p class="mt-2">一條均勻導線長 100m，電阻為 5Ω。若將其均勻拉長為 2 倍，電阻變為多少？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        體積不變，拉長 2 倍 ($L'=2L$)，則截面積縮為 1/2 ($A'=A/2$)。<br>
+                        由 $R = \rho L/A$ 可知，電阻與 $L$成正比，與 $A$成反比。<br>
+                        $R_{new} = R_{old} \times (2 / 0.5) = 5 \times 4 = 20$ Ω。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 3 -->
+            <section id="chapter-3" class="chapter-content">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">第三章：串並聯電路</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">重點公式彙整</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">串聯電阻：</p>
+                            <p class="text-xl">$$R_T = R_1 + R_2 + ...$$</p>
+                            <p class="text-xs text-slate-500">電流相同, 電壓分配</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">並聯電阻：</p>
+                            <p class="text-xl">$$\frac{1}{R_T} = \frac{1}{R_1} + \frac{1}{R_2} + ...$$</p>
+                            <p class="text-xs text-slate-500">電壓相同, 電流分配</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">分壓法則：</p>
+                            <p class="text-xl">$$V_1 = E \times \frac{R_1}{R_1 + R_2}$$</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">分流法則：</p>
+                            <p class="text-xl">$$I_1 = I_T \times \frac{R_2}{R_1 + R_2}$$</p>
+                            <p class="text-xs text-slate-500">注意分子的電阻為另一支路</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <p class="font-bold">範例 3.1：分壓計算</p>
+                    <p class="mt-2">12V 電源接上 4Ω 與 8Ω 兩串聯電阻，求 8Ω 電阻上的分壓？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        $V_8 = 12 \times [8 / (4 + 8)] = 12 \times (8/12) = 8$ 伏特 (V)。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 4 -->
+            <section id="chapter-4" class="chapter-content">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">第四章：直流網路分析</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">主要分析工具</h3>
+                    <div class="space-y-4">
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <span class="font-bold text-blue-700">1. 克希荷夫電流定律 (KCL)：</span> 流入節點的電流總和等於流出節點的電流總和。
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <span class="font-bold text-blue-700">2. 克希荷夫電壓定律 (KVL)：</span> 繞電路迴路一圈的電位升降總和等於零。
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <span class="font-bold text-blue-700">3. 戴維寧等效電路：</span> 任何線性網路對外皆可等效成一個電壓源 $E_{th}$ 與一串聯電阻 $R_{th}$。
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <span class="font-bold text-blue-700">4. 最大功率轉移：</span> 當負載電阻 $R_L = R_{th}$ 時，負載可獲得最大功率。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <p class="font-bold">範例 4.1：最大功率轉移</p>
+                    <p class="mt-2">若戴維寧等效電阻為 10Ω，等效電壓為 20V，則外接負載 $R_L$ 為多少時可獲得最大功率？功率為多少？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        1. $R_L = R_{th} = 10$ Ω 時獲得最大功率。<br>
+                        2. $P_{max} = E_{th}^2 / (4 R_{th}) = 20^2 / (4 \times 10) = 400 / 40 = 10$ 瓦特 (W)。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 5 -->
+            <section id="chapter-5" class="chapter-content">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">第五章：電容與靜電</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">重點公式彙整</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電容量：</p>
+                            <p class="text-xl">$$C = \frac{Q}{V}$$</p>
+                            <p class="text-xs text-slate-500">單位：法拉 (F)</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">平行板電容：</p>
+                            <p class="text-xl">$$C = \epsilon \frac{A}{d}$$</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電能儲存：</p>
+                            <p class="text-xl">$$W = \frac{1}{2}CV^2$$</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電容串聯：</p>
+                            <p class="text-xl">$$\frac{1}{C_T} = \frac{1}{C_1} + \frac{1}{C_2}$$</p>
+                            <p class="text-xs text-slate-500">注意：公式與電阻並聯相似</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <p class="font-bold">範例 5.1：電容並聯與儲能</p>
+                    <p class="mt-2">10μF 與 20μF 電容並聯後接到 10V 電源，總電荷與總能量為何？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        1. $C_T = 10\mu + 20\mu = 30\mu F$。<br>
+                        2. $Q_T = C_T \times V = 30\mu \times 10 = 300 \mu C$。<br>
+                        3. $W = 1/2 \times 30\mu \times 10^2 = 1500 \mu J = 1.5$ mJ。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 6 -->
+            <section id="chapter-6" class="chapter-content">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">第六章：電感與電磁</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">重點公式彙整</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電感量：</p>
+                            <p class="text-xl">$$L = N \frac{\Phi}{I}$$</p>
+                            <p class="text-xs text-slate-500">單位：亨利 (H)</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">法拉第定律：</p>
+                            <p class="text-xl">$$e = L \frac{di}{dt}$$</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">電能儲存：</p>
+                            <p class="text-xl">$$W = \frac{1}{2}LI^2$$</p>
+                        </div>
+                        <div class="math-box">
+                            <p class="font-bold text-slate-600">互感：</p>
+                            <p class="text-xl">$$M = k\sqrt{L_1 L_2}$$</p>
+                            <p class="text-xs text-slate-500">k: 耦合係數</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <p class="font-bold">範例 6.1：互感計算</p>
+                    <p class="mt-2">兩電感 $L_1=4H$，$L_2=9H$，耦合係數 $k=0.5$，求其互感 $M$？</p>
+                    <button onclick="toggleSolution(this)" class="mt-4 text-blue-600 hover:underline">查看解答</button>
+                    <div class="solution">
+                        解答：<br>
+                        $M = 0.5 \times \sqrt{4 \times 9} = 0.5 \times \sqrt{36} = 0.5 \times 6 = 3$ 亨利 (H)。
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 p-8 mt-12 text-center">
+        <div class="max-w-6xl mx-auto">
+            <p>© 2024 基本電學數位學習輔助工具 - 基於南工電子科課程規劃</p>
+            <p class="text-sm mt-2">請配合教科書與課後練習題目加強學習效果</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Tab system
+        function showChapter(n) {
+            // Hide all
+            document.querySelectorAll('.chapter-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Show selected
+            document.getElementById('chapter-' + n).classList.add('active');
+            
+            // Update nav styling
+            document.querySelectorAll('#nav-list button').forEach(el => {
+                el.classList.remove('bg-blue-600', 'text-white');
+            });
+            document.getElementById('nav-' + n).classList.add('bg-blue-600', 'text-white');
+
+            // Scroll to top
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // Initialize first chapter
+        document.addEventListener('DOMContentLoaded', () => {
+            showChapter(1);
+        });
+
+        // Toggle example solution
+        function toggleSolution(btn) {
+            const sol = btn.nextElementSibling;
+            if (sol.style.display === 'block') {
+                sol.style.display = 'none';
+                btn.textContent = '查看解答';
+            } else {
+                sol.style.display = 'block';
+                btn.textContent = '隱藏解答';
+            }
+        }
+
+        // Mini Calculator logic
+        function calculateI() {
+            const v = parseFloat(document.getElementById('calcV').value);
+            const r = parseFloat(document.getElementById('calcR').value);
+            const resDiv = document.getElementById('calcRes');
+            
+            if (isNaN(v) || isNaN(r) || r === 0) {
+                resDiv.textContent = "請輸入有效數值";
+                resDiv.className = "text-center font-bold text-red-300 mt-2";
+                return;
+            }
+            
+            const i = v / r;
+            resDiv.textContent = `I = ${i.toFixed(2)} A`;
+            resDiv.className = "text-center font-bold text-yellow-300 mt-2 text-xl";
+        }
+
+        // Render equations using MathJax
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
